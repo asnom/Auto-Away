@@ -25,7 +25,7 @@ public class AwayService extends Service
 	{
 		super.onCreate();
 
-		this.smsreceiver = new BroadcastReceiver()
+		smsreceiver = new BroadcastReceiver()
 		{
 			@Override
 			public void onReceive(Context context, Intent intent)
@@ -51,7 +51,7 @@ public class AwayService extends Service
 			}
 		};
 
-		registerReceiver(this.smsreceiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+		registerReceiver(smsreceiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
 	}
 
 
@@ -74,11 +74,6 @@ public class AwayService extends Service
 		{
 			manager.sendTextMessage(phonenumber, null, message, piSend, piDelivered);
 		}
-	}
-	
-	public void onDestroy() {
-		super.onDestroy();
-		this.unregisterReceiver(this.smsreceiver);
 	}
 }
 

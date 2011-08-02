@@ -87,7 +87,7 @@ public class Main extends PreferenceActivity implements OnPreferenceClickListene
 
 				startService(awayService);
 				
-				finish();
+				//finish();
 			}
 		}
 		else if(p.getKey().equals(MESSAGE_PREF))
