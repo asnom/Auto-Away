@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Generic -->
+    <string name="app_name">Auto-Away</string>
+    <string name="app_version">0.1</string>
+    
+    <!-- General Title -->
+    <string name="general_title">General</string>
+    
+    <!-- Service -->
+    <string name="service_title">Away Service</string>
+    <string name="service_summary">Starts the Auto-Away service</string>
+    
+    <!-- Message -->
+    <string name="message_title">Custom Message</string>
+    <string name="message_summary">Message to send out when a text is received</string>
+    <string name="message_content">Hey, I\'m busy, I\'ll talk to you later</string>
+    
+    <!-- Notification Message -->
+    <string name="notification_ticker_text">Auto-Away Service now running</string>
+    <string name="notification_title">Auto-Away</string>
+    <string name="notification_content">Auto-Away is currently running</string>
+</resources>

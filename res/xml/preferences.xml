@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory
+		android:title="@string/general_title" >
+	
+		<CheckBoxPreference
+			android:title="@string/service_title"
+			android:defaultValue="false"
+			android:summary="@string/service_summary"
+			android:key="serviceCheckBox" />
+
+		<EditTextPreference
+			android:title="@string/message_title"
+			android:defaultValue="@string/message_content"
+			android:summary="@string/message_summary"
+			android:key="messageEditText" />
+
+	</PreferenceCategory>
+
+</PreferenceScreen>
