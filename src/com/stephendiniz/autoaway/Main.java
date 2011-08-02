@@ -85,9 +85,17 @@ public class Main extends PreferenceActivity implements OnPreferenceClickListene
 				editor.putBoolean(SERVICE_PREF, true);
 				createNotification();
 
-				startService(awayService);
+				//Initialize messageContent before sending it to the Service
+				messageContent = prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content));
 				
-				//finish();
+				//Create Instance of AwayService and setMessageContent to messageContent
+				AwayService awo = new AwayService();
+				awo.setMessageContent(messageContent);
+
+				//Start the AwayService
+				startService(awayService);
+
+				finish();
 			}
 		}
 		else if(p.getKey().equals(MESSAGE_PREF))

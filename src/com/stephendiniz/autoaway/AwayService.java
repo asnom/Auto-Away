@@ -2,7 +2,6 @@ package com.stephendiniz.autoaway;
 
 import java.util.ArrayList;
 
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,17 +14,14 @@ import android.telephony.SmsMessage;
 
 public class AwayService extends Service
 {
-	@Override
-	public IBinder onBind(Intent i)
-	{ return null; }
+	private BroadcastReceiver smsReceiver;
+	private String messageContent;
 	
-	public BroadcastReceiver smsreceiver;
-	 
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate();
-
-		smsreceiver = new BroadcastReceiver()
+		
+		smsReceiver = new BroadcastReceiver()
 		{
 			@Override
 			public void onReceive(Context context, Intent intent)
@@ -45,22 +41,25 @@ public class AwayService extends Service
 						info = msgs[i].getOriginatingAddress();
 					}
 
-					Main mo = new Main();
-					sendSms(info, mo.messageContent);
+					sendSms(info, messageContent);
 				}
 			}
 		};
-
-		registerReceiver(smsreceiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+		
+		registerReceiver(smsReceiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
 	}
 
-
-	private void sendSms(String phonenumber, String message)
+	public void onDestroy()
+	{
+		super.onDestroy();
+		
+		//Make sure to destroy the Broadcast Receiver when the Auto-Away Service is destroyed
+		unregisterReceiver(smsReceiver);
+	}
+	
+	public void sendSms(String phonenumber, String message)
 	{
 		SmsManager manager = SmsManager.getDefault();
-
-		PendingIntent piSend = PendingIntent.getBroadcast(this, 0, new Intent("SMS_SENT"), 0);
-		PendingIntent piDelivered = PendingIntent.getBroadcast(this, 0, new Intent("SMS_DELIVERED"), 0);
 
 		int length = message.length();
 
@@ -70,10 +69,14 @@ public class AwayService extends Service
 
 			manager.sendMultipartTextMessage(phonenumber, null, messagelist, null, null);
 		}
+		
 		else
-		{
-			manager.sendTextMessage(phonenumber, null, message, piSend, piDelivered);
-		}
-	}
-}
+			manager.sendTextMessage(phonenumber, null, message, null, null);
 
+	}
+	
+	@Override
+	public IBinder onBind(Intent i) { return null; }
+	public void setMessageContent(String message) { messageContent = message; }
+	public String getMessageContent() { return messageContent; }
+}
