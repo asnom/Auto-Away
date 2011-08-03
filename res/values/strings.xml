@@ -8,13 +8,18 @@
     <string name="general_title">General</string>
     
     <!-- Service -->
-    <string name="service_title">Away Service</string>
+    <string name="service_title">Start</string>
     <string name="service_summary">Starts the Auto-Away service</string>
     
     <!-- Message -->
     <string name="message_title">Custom Message</string>
     <string name="message_summary">Message to send out when a text is received</string>
     <string name="message_content">Hey, I\'m busy, I\'ll talk to you later</string>
+    
+    <!-- Delay -->
+    <string name="delay_title">Delay</string>
+    <string name="delay_summary">How many seconds to delay</string>
+    
     
     <!-- Notification Message -->
     <string name="notification_ticker_text">Auto-Away Service now running</string>
