@@ -15,6 +15,12 @@
 			android:defaultValue="@string/message_content"
 			android:summary="@string/message_summary"
 			android:key="messageEditText" />
+			
+		<EditTextPreference
+			android:title="@string/delay_title"
+			android:defaultValue="30"
+			android:summary="@string/delay_summary"
+			android:key="delayEditText" />
 
 	</PreferenceCategory>
 
