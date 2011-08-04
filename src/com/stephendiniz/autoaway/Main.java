@@ -25,10 +25,18 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	private String	messageContent;
 	private int		delayDuration;
 	
+<<<<<<< HEAD
 	Resources r;
+=======
+	Resources r = getResources();
 	
-	SharedPreferences prefs;
-	SharedPreferences.Editor editor;
+	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+	SharedPreferences.Editor editor = prefs.edit();
+>>>>>>> upstream/master
+	
+	Preference serviceCheckBox;
+	Preference messageEditText;
+	Preference delayEditText;
 	
 	Preference serviceCheckBox;
 	Preference messageEditText;
@@ -50,16 +58,24 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 		delayEditText = (Preference)findPreference(DELAY_PREF);
 		delayEditText.setOnPreferenceChangeListener(this);
 		
+<<<<<<< HEAD
 		r = getResources();
 		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		editor = prefs.edit();
+=======
+		//onCreate, service shouldn't be running
+		setServiceStatus(false);
+>>>>>>> upstream/master
 	}
 	
 	public void onResume()
 	{
 		super.onResume();
 		
+<<<<<<< HEAD
 		
+=======
+>>>>>>> upstream/master
 		if(serviceRunning())
 			setPreferenceStatus(false);
 		
@@ -90,8 +106,11 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	@Override
 	public boolean onPreferenceChange(Preference p, Object o)
 	{
+<<<<<<< HEAD
 		r = getResources();
 		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+=======
+>>>>>>> upstream/master
 		if(p.getKey().equals(SERVICE_PREF))
 		{
 			final Intent awayService = new Intent(this, AwayService.class);
@@ -131,7 +150,10 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	
 	private void createNotification()
 	{
+<<<<<<< HEAD
 		r = getResources();
+=======
+>>>>>>> upstream/master
 		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		
 		Notification notification = new Notification(R.drawable.notification_icon, r.getString(R.string.notification_ticker_text), System.currentTimeMillis());
@@ -161,8 +183,11 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	//Sets private variables AND preference
 	public boolean serviceRunning()							{ return serviceRunning;								}
 	public void setServiceStatus(boolean serviceRunning)	{ this.serviceRunning = serviceRunning;	
+<<<<<<< HEAD
 															  prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 	                                                          editor = prefs.edit();
+=======
+>>>>>>> upstream/master
 															  editor.putBoolean(SERVICE_PREF, serviceRunning);	
 															  editor.commit();										}
 
@@ -172,9 +197,13 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 															  editor.commit();										}
 	
 	public int getDelayDuration()							{ return delayDuration;									}
+<<<<<<< HEAD
 	public void setDelayDuration(String delayDuration)		{ this.delayDuration = Integer.parseInt(delayDuration);	
 															  prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 														      editor = prefs.edit();
+=======
+	public void setDelayDuration(String delayDuration)		{ this.delayDuration = Integer.parseInt(delayDuration);				
+>>>>>>> upstream/master
 															  editor.putString(DELAY_PREF, delayDuration);
 															  editor.commit();										}
 }

@@ -18,6 +18,7 @@ public class AwayService extends Service
 {
 	final String MESSAGE_PREF	= "messageEditText";
 	final String DELAY_PREF		= "delayEditText";
+<<<<<<< HEAD
 
 	private String messageContent;
 	private int delayDuration;
@@ -27,6 +28,22 @@ public class AwayService extends Service
 	Bundle infoBundle;
 
 	BroadcastReceiver smsReceiver;
+=======
+	
+	Resources r = getResources();
+	
+	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+	SharedPreferences.Editor editor = prefs.edit();
+
+	private String messageContent;
+	private int delayDuration;
+	private String returnAddress;
+	
+	Timer timer = new Timer();
+	Bundle infoBundle;
+
+	private BroadcastReceiver smsReceiver;
+>>>>>>> upstream/master
 	
 	public void onStart(Intent intent, int startId)
 	{
