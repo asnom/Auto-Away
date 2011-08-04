@@ -1,62 +1,62 @@
 package com.stephendiniz.autoaway;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 
 public class AwayService extends Service
 {
-	final String MESSAGE_PREF = "messageEditText";
+	final String MESSAGE_PREF	= "messageEditText";
+	final String DELAY_PREF		= "delayEditText";
+
+	private String messageContent;
+	private int delayDuration;
+	private String returnAddress;
 	
-	private BroadcastReceiver smsReceiver;
-	
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate();
-	}
+	Timer timer = new Timer();
+	Bundle infoBundle;
+
+	BroadcastReceiver smsReceiver;
 	
 	public void onStart(Intent intent, int startId)
 	{
 		super.onStart(intent, startId);
+
+		infoBundle = intent.getExtras();
+		setMessageContent(infoBundle.getString("extraMessageContent"));
+		setDelayDuration(infoBundle.getString("extraDelayDuration"));
 		
 		smsReceiver = new BroadcastReceiver()
 		{
 			@Override
 			public void onReceive(Context context, Intent intent)
 			{
-				Bundle bundle = intent.getExtras();        
+				Bundle bundle = intent.getExtras();
 				SmsMessage[] msgs = null;
 
 				if(null != bundle)
 				{
-					String info = null;
+					setReturnAddress(null);
 					Object[] pdus = (Object[]) bundle.get("pdus");
 					msgs = new SmsMessage[pdus.length];
 
 					for (int i = 0; i < msgs.length; i++)
 					{
 						msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
-						info = msgs[i].getOriginatingAddress();
+						setReturnAddress(msgs[i].getOriginatingAddress());
 					}
-
-					Resources r = getResources();
 					
-					//Preference Manager
-					prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-					editor = prefs.edit();
-					
-					sendSms(info, prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content)));
+					setDelay();
 				}
 			}
 		};
@@ -71,25 +71,45 @@ public class AwayService extends Service
 		//Make sure to destroy the Broadcast Receiver when the Auto-Away Service is destroyed
 		unregisterReceiver(smsReceiver);
 	}
+
+	public void setDelay()
+	{
+		timer.schedule(new TimerTask()
+		{
+			public void run()
+			{
+				sendSms();
+			}
+		},(long)(1000*getDelayDuration()));
+	}
 	
-	public void sendSms(String phonenumber, String message)
+	public void sendSms()
 	{
 		SmsManager manager = SmsManager.getDefault();
-
-		int length = message.length();
+		
+		int length = getMessageContent().length();
 
 		if (length > 160)
 		{
-			ArrayList<String> messagelist = manager.divideMessage(message);
+			ArrayList<String> messagelist = manager.divideMessage(getMessageContent());
 
-			manager.sendMultipartTextMessage(phonenumber, null, messagelist, null, null);
+			manager.sendMultipartTextMessage(getReturnAddress(), null, messagelist, null, null);
 		}
 		else
-		{
-			manager.sendTextMessage(phonenumber, null, message, null, null);
-		}
+			manager.sendTextMessage(getReturnAddress(), null, getMessageContent(), null, null);
 	}
-	
+
 	@Override
 	public IBinder onBind(Intent i) { return null; }
+	
+	//Getters and Setters for non-final variables
+	//Sets private variables AND preference
+	public String getMessageContent() 						{ return messageContent;								}
+	public void setMessageContent(String messageContent)	{ this.messageContent = messageContent;					}
+
+	public int getDelayDuration()							{ return delayDuration;									}
+	public void setDelayDuration(String delayDuration)		{ this.delayDuration = Integer.parseInt(delayDuration);	}
+	
+	public String getReturnAddress()						{ return returnAddress;									}
+	public void setReturnAddress(String returnAddress)		{ this.returnAddress = returnAddress;					}
 }

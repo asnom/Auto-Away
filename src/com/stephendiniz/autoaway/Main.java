@@ -10,19 +10,29 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-public class Main extends PreferenceActivity implements OnPreferenceClickListener, OnPreferenceChangeListener
+public class Main extends PreferenceActivity implements OnPreferenceChangeListener
 {
-	final String SERVICE_PREF = "serviceCheckBox";
-	final String MESSAGE_PREF = "messageEditText";
-	final int NOTIFICATION_ID = 1;
+	final String SERVICE_PREF	= "serviceCheckBox";
+	final String MESSAGE_PREF	= "messageEditText";
+	final String DELAY_PREF		= "delayEditText";
+	
+	final int NOTIFICATION_ID	= 1;
 
-	String messageContent;
+	private boolean	serviceRunning;
+	private String	messageContent;
+	private int		delayDuration;
+	
+	Resources r;
+	
 	SharedPreferences prefs;
 	SharedPreferences.Editor editor;
+	
+	Preference serviceCheckBox;
+	Preference messageEditText;
+	Preference delayEditText;
 	
 	@Override
 	public void onCreate (Bundle savedInstanceState)
@@ -31,107 +41,102 @@ public class Main extends PreferenceActivity implements OnPreferenceClickListene
 		addPreferencesFromResource(R.xml.preferences);
 		
 		//Preference Objects
-		Preference messageEditText = (Preference)findPreference(MESSAGE_PREF);
-		messageEditText.setOnPreferenceClickListener(this);
-		
-		Preference serviceCheckBox = (Preference)findPreference(SERVICE_PREF);
+		serviceCheckBox = (Preference)findPreference(SERVICE_PREF);
 		serviceCheckBox.setOnPreferenceChangeListener(this);
+		
+		messageEditText = (Preference)findPreference(MESSAGE_PREF);
+		messageEditText.setOnPreferenceChangeListener(this);
+		
+		delayEditText = (Preference)findPreference(DELAY_PREF);
+		delayEditText.setOnPreferenceChangeListener(this);
+		
+		r = getResources();
+		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		editor = prefs.edit();
+	}
+	
+	public void onResume()
+	{
+		super.onResume();
+		
+		
+		if(serviceRunning())
+			setPreferenceStatus(false);
+		
+		setMessageContent(prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content)));
+		setDelayDuration(prefs.getString(DELAY_PREF, "30"));
 	}
 	
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState)
 	{
-		savedInstanceState.putString("messageSaved", messageContent);
 		super.onSaveInstanceState(savedInstanceState);
+		
+		//Save information as Strings
+		savedInstanceState.putString("messageSaved", getMessageContent());
+		savedInstanceState.putString("delaySaved", Integer.toString(getDelayDuration()));
 	}
 	
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState)
     {
-      super.onRestoreInstanceState(savedInstanceState);
-      
-      messageContent = savedInstanceState.getString("messageSaved");
-      
-      prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-      editor = prefs.edit();
-      editor.putString(MESSAGE_PREF, messageContent);
-      editor.commit();
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		//Restore and set saved information from Bundle as correct types
+		setMessageContent(savedInstanceState.getString("messageSaved"));
+		setDelayDuration(savedInstanceState.getString("delaySaved"));
     }
 	
 	@Override
 	public boolean onPreferenceChange(Preference p, Object o)
 	{
-		Resources r = getResources();
-		
-		//Preference Manager
+		r = getResources();
 		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-		editor = prefs.edit();
-		
-		//Check and Edit Preferences
 		if(p.getKey().equals(SERVICE_PREF))
 		{
 			final Intent awayService = new Intent(this, AwayService.class);
-
+				
 			if(prefs.getBoolean(SERVICE_PREF, false))
 			{
-				editor.putBoolean(SERVICE_PREF, false);
+				setServiceStatus(false);
 				destroyNotification();
-				
+				setPreferenceStatus(true);
 				stopService(awayService);
 			}
 			
 			else
 			{
-				editor.putBoolean(SERVICE_PREF, true);
+				setServiceStatus(true);
 				createNotification();
+				setPreferenceStatus(false);
 
-				//Initialize messageContent before sending it to the Service
-				messageContent = prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content));
+				//Set Intent Extras
+				awayService.putExtra("extraMessageContent", getMessageContent());
+				awayService.putExtra("extraDelayDuration", Integer.toString(getDelayDuration()));
 
-				//Start the AwayService
+				//Start service and terminate activity
 				startService(awayService);
-
 				finish();
 			}
 		}
-		
-		//Commit and return true
-		editor.commit();
-		
-		return true;
-	}
-	
-	@Override
-	public boolean onPreferenceClick(Preference p)
-	{
-		Resources r = getResources();
-		
-		//Preference Manager
-		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-		editor = prefs.edit();
-		
-		//Check and Edit Preferences
-		if(p.getKey().equals(MESSAGE_PREF))
-			if(prefs.getString(MESSAGE_PREF, null).equals(""))
-				editor.putString(MESSAGE_PREF, r.getString(R.string.message_content));
-		
-		//Commit and return true
-		editor.commit();
+		else if(p.getKey().equals(MESSAGE_PREF))
+			if(getMessageContent().equals(""))
+				setMessageContent(r.getString(R.string.message_content));
+		else if(p.getKey().equals(DELAY_PREF))
+			if(getDelayDuration() < 0)
+				setDelayDuration("30");
 		
 		return true;
 	}
 	
 	private void createNotification()
 	{
-		Resources r = getResources();
-		
+		r = getResources();
 		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-		long timeToMake = System.currentTimeMillis();
 		
-		Notification notification = new Notification(R.drawable.notification_icon, r.getString(R.string.notification_ticker_text), timeToMake);
+		Notification notification = new Notification(R.drawable.notification_icon, r.getString(R.string.notification_ticker_text), System.currentTimeMillis());
 		
-		Intent notificationIntent = new Intent(this, Main.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0);
 		
 		notification.setLatestEventInfo(this, r.getString(R.string.notification_title), r.getString(R.string.notification_content), contentIntent);
 		notification.flags |= Notification.FLAG_ONGOING_EVENT;
@@ -145,4 +150,31 @@ public class Main extends PreferenceActivity implements OnPreferenceClickListene
 		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		nManager.cancel(NOTIFICATION_ID);
 	}
+	
+	private void setPreferenceStatus(boolean status)
+	{
+		messageEditText.setEnabled(status);
+		delayEditText.setEnabled(status);
+	}
+	
+	//Getters and Setters for non-final variables
+	//Sets private variables AND preference
+	public boolean serviceRunning()							{ return serviceRunning;								}
+	public void setServiceStatus(boolean serviceRunning)	{ this.serviceRunning = serviceRunning;	
+															  prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+	                                                          editor = prefs.edit();
+															  editor.putBoolean(SERVICE_PREF, serviceRunning);	
+															  editor.commit();										}
+
+	public String getMessageContent() 						{ return messageContent;								}
+	public void setMessageContent(String messageContent)	{ this.messageContent = messageContent;
+															  editor.putString(MESSAGE_PREF, messageContent);
+															  editor.commit();										}
+	
+	public int getDelayDuration()							{ return delayDuration;									}
+	public void setDelayDuration(String delayDuration)		{ this.delayDuration = Integer.parseInt(delayDuration);	
+															  prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+														      editor = prefs.edit();
+															  editor.putString(DELAY_PREF, delayDuration);
+															  editor.commit();										}
 }

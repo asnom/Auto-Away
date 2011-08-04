@@ -19,6 +19,10 @@ public final class R {
          */
         public static final int app_name=0x7f040000;
         public static final int app_version=0x7f040001;
+        public static final int delay_summary=0x7f040009;
+        /**  Delay 
+         */
+        public static final int delay_title=0x7f040008;
         /**  General Title 
          */
         public static final int general_title=0x7f040002;
@@ -27,11 +31,11 @@ public final class R {
         /**  Message 
          */
         public static final int message_title=0x7f040005;
-        public static final int notification_content=0x7f04000a;
+        public static final int notification_content=0x7f04000c;
         /**  Notification Message 
          */
-        public static final int notification_ticker_text=0x7f040008;
-        public static final int notification_title=0x7f040009;
+        public static final int notification_ticker_text=0x7f04000a;
+        public static final int notification_title=0x7f04000b;
         public static final int service_summary=0x7f040004;
         /**  Service 
          */
