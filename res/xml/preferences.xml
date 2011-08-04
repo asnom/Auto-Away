@@ -22,12 +22,6 @@
 			android:summary="@string/delay_summary"
 			android:key="delayEditText" />
 
-		<EditTextPreference
-			android:title="@string/delay_title"
-			android:defaultValue="30"
-			android:summary="@string/delay_summary"
-			android:key="delayEditText" />
-
 	</PreferenceCategory>
 
 </PreferenceScreen>
