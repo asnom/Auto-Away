@@ -19,9 +19,8 @@ public class Main extends PreferenceActivity implements OnPreferenceClickListene
 	final String SERVICE_PREF = "serviceCheckBox";
 	final String MESSAGE_PREF = "messageEditText";
 	final int NOTIFICATION_ID = 1;
-	
-	String messageContent;
 
+	String messageContent;
 	SharedPreferences prefs;
 	SharedPreferences.Editor editor;
 	
@@ -50,6 +49,7 @@ public class Main extends PreferenceActivity implements OnPreferenceClickListene
     public void onRestoreInstanceState(Bundle savedInstanceState)
     {
       super.onRestoreInstanceState(savedInstanceState);
+      
       messageContent = savedInstanceState.getString("messageSaved");
       
       prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -87,10 +87,6 @@ public class Main extends PreferenceActivity implements OnPreferenceClickListene
 
 				//Initialize messageContent before sending it to the Service
 				messageContent = prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content));
-				
-				//Create Instance of AwayService and setMessageContent to messageContent
-				AwayService awo = new AwayService();
-				awo.setMessageContent(messageContent);
 
 				//Start the AwayService
 				startService(awayService);
@@ -98,8 +94,6 @@ public class Main extends PreferenceActivity implements OnPreferenceClickListene
 				finish();
 			}
 		}
-		else if(p.getKey().equals(MESSAGE_PREF))
-			messageContent = prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content));
 		
 		//Commit and return true
 		editor.commit();

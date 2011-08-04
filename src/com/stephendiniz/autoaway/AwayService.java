@@ -7,19 +7,28 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 
 public class AwayService extends Service
 {
+	final String MESSAGE_PREF = "messageEditText";
+	
 	private BroadcastReceiver smsReceiver;
-	private String messageContent;
 	
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate();
+	}
+	
+	public void onStart(Intent intent, int startId)
+	{
+		super.onStart(intent, startId);
 		
 		smsReceiver = new BroadcastReceiver()
 		{
@@ -41,7 +50,13 @@ public class AwayService extends Service
 						info = msgs[i].getOriginatingAddress();
 					}
 
-					sendSms(info, messageContent);
+					Resources r = getResources();
+					
+					//Preference Manager
+					prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+					editor = prefs.edit();
+					
+					sendSms(info, prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content)));
 				}
 			}
 		};
@@ -69,14 +84,12 @@ public class AwayService extends Service
 
 			manager.sendMultipartTextMessage(phonenumber, null, messagelist, null, null);
 		}
-		
 		else
+		{
 			manager.sendTextMessage(phonenumber, null, message, null, null);
-
+		}
 	}
 	
 	@Override
 	public IBinder onBind(Intent i) { return null; }
-	public void setMessageContent(String message) { messageContent = message; }
-	public String getMessageContent() { return messageContent; }
 }
