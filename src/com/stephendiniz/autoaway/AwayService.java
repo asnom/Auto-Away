@@ -201,7 +201,7 @@ public class AwayService extends Service
 			//Destory old Notification
 			nManager.cancel(NOTIFICATION_ID);
 
-			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.notification_ticker_text_2) + " " + getReturnAddress(), System.currentTimeMillis());
+			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.notification_ticker_text_2) + " " + hyphenate(getReturnAddress()), System.currentTimeMillis());
 			notification.setLatestEventInfo(this, r.getString(R.string.notification_title) + " (" + getNotifyCount() + ")", r.getString(R.string.notification_content), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
 		}
 		else
@@ -221,6 +221,15 @@ public class AwayService extends Service
 		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		nManager.cancel(NOTIFICATION_ID);
 >>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
+	}
+	
+	public String hyphenate(String number)
+	{
+		if (number.length() == 10)
+			return number.substring(0,3) + "-" + number.substring(3,6) + "-" + number.substring(6,10);
+		
+		//Not 10 digits long - Unable to hyphenate
+		return number;
 	}
 	
 	public void sendSms()
