@@ -10,16 +10,16 @@
 			android:summary="@string/service_summary"
 			android:key="serviceCheckBox" />
 			
-		<CheckBoxPreference
-			android:title="@string/silent_title"
-			android:defaultValue="false"
-			android:summary="@string/silent_summary"
-			android:key="silentCheckBox" />
-			
 	</PreferenceCategory>
 	
 	<PreferenceCategory
 			android:title="@string/preferences_title" >
+
+		<CheckBoxPreference
+			android:title="@string/silent_title"
+			android:defaultValue="true"
+			android:summary="@string/silent_summary"
+			android:key="silentCheckBox" />
 
 		<EditTextPreference
 			android:title="@string/message_title"

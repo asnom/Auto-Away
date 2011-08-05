@@ -12,8 +12,8 @@
     <string name="service_summary">Starts the Auto-Away service</string>
     
     <!-- Silent -->
-    <string name="silent_title">Silent Mode</string>
-    <string name="silent_summary">Silence all sounds except media &amp; alarms</string>
+    <string name="silent_title">Silence on Start</string>
+    <string name="silent_summary">Silence all sounds except media &amp; alarms on service start</string>
     
     <!-- Preferences Title -->
     <string name="preferences_title">Preferences</string>

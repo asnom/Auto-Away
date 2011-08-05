@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.SmsManager;
@@ -21,8 +22,9 @@ import android.telephony.SmsMessage;
 
 public class AwayService extends Service
 {
-	private boolean informStatus;
+	private boolean silentStatus;
 	private String messageContent;
+	private boolean informStatus;
 	private int delayDuration;
 	private boolean logStatus;
 	private boolean repeatStatus;
@@ -38,6 +40,8 @@ public class AwayService extends Service
 
 	Resources r;
 	
+	AudioManager aManager;
+	
 	private BroadcastReceiver smsReceiver;
 	
 	public void onStart(Intent intent, int startId)
@@ -47,11 +51,17 @@ public class AwayService extends Service
 		setNotifyCount(0);
 		
 		infoBundle = intent.getExtras();
+		setSilentStatus(infoBundle.getBoolean("extraSilentStatus"));
 		setMessageContent(infoBundle.getString("extraMessageContent"));
 		setInformStatus(infoBundle.getBoolean("extraInformStatus"));
 		setDelayDuration(infoBundle.getString("extraDelayDuration"));
 		setLogStatus(infoBundle.getBoolean("extraLogStatus"));
 		setRepeatStatus(infoBundle.getBoolean("extraRepeatStatus"));
+		
+		aManager = (AudioManager)getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+		
+		if(getSilentStatus())
+			aManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 		
 		smsReceiver = new BroadcastReceiver()
 		{
@@ -88,7 +98,15 @@ public class AwayService extends Service
 		//Make sure to destroy the Broadcast Receiver when the Auto-Away Service is destroyed
 		addresses.removeAll(null);
 		setNotifyCount(0);
+		
+		//Return back to Normal Ringer state (if it was changed)
+		if(getSilentStatus())
+			aManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+		
+		//Release Timer
 		timer.cancel();
+		timer.purge();
+		
 		unregisterReceiver(smsReceiver);
 	}
 
@@ -161,6 +179,9 @@ public class AwayService extends Service
 	
 	//Getters and Setters for non-final variables
 	//Sets private variables AND preference
+	public boolean getSilentStatus()						{ return silentStatus;												}
+	public void setSilentStatus(boolean silentStatus)		{ this.silentStatus = silentStatus;									}
+	
 	public String getMessageContent() 						{ if(getInformStatus()) { return "[Auto-Away]: " + messageContent;	}
 															  return messageContent;											}
 	public void setMessageContent(String messageContent)	{ this.messageContent = messageContent;								}
