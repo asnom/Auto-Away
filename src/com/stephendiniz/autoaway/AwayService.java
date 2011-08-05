@@ -31,7 +31,7 @@ public class AwayService extends Service
 	private String returnAddress;
 	private int notifyCount;
 	
-	final int NOTIFICATION_ID = 2;
+	final int NOTIFICATION_ID = 1;
 	
 	private List<String> addresses = new ArrayList<String>();
 	
@@ -49,6 +49,7 @@ public class AwayService extends Service
 		super.onStart(intent, startId);
 		
 		setNotifyCount(0);
+		createNotification(0);
 		
 		infoBundle = intent.getExtras();
 		setSilentStatus(infoBundle.getBoolean("extraSilentStatus"));
@@ -95,9 +96,7 @@ public class AwayService extends Service
 	{
 		super.onDestroy();
 		
-		//Make sure to destroy the Broadcast Receiver when the Auto-Away Service is destroyed
-		addresses.removeAll(null);
-		setNotifyCount(0);
+		destroyNotification();
 		
 		//Return back to Normal Ringer state (if it was changed)
 		if(getSilentStatus())
@@ -130,7 +129,7 @@ public class AwayService extends Service
 			addresses.add(getReturnAddress());
 	}
 	
-	private void notifySent()
+	private void createNotification(int number)
 	{
 		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notification;
@@ -142,18 +141,25 @@ public class AwayService extends Service
 			//Destory old Notification
 			nManager.cancel(NOTIFICATION_ID);
 
-			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.nlog_ticker_text) + " " + getReturnAddress(), System.currentTimeMillis());
-			notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + Integer.toString((getNotifyCount()+1)) + " " + r.getString(R.string.nlog_content_3), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
+			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.notification_ticker_text_2) + " " + getReturnAddress(), System.currentTimeMillis());
+			notification.setLatestEventInfo(this, r.getString(R.string.notification_title) + " (" + getNotifyCount() + ")", r.getString(R.string.notification_content), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
 		}
 		else
 		{
-			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.nlog_ticker_text) + " " + getReturnAddress(), System.currentTimeMillis());
-			notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + r.getString(R.string.nlog_content_2) + " " + getReturnAddress(), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
+			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.notification_ticker_text), System.currentTimeMillis());
+			notification.setLatestEventInfo(this, r.getString(R.string.notification_title), r.getString(R.string.notification_content), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
 		}
 		
-		notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		notification.flags |= Notification.FLAG_NO_CLEAR;
 		nManager.notify(NOTIFICATION_ID, notification);
 		setNotifyCount(getNotifyCount() + 1);
+	}
+	
+	private void destroyNotification()
+	{
+		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		nManager.cancel(NOTIFICATION_ID);
 	}
 	
 	public void sendSms()
@@ -161,8 +167,7 @@ public class AwayService extends Service
 		SmsManager manager = SmsManager.getDefault();
 		int length = getMessageContent().length();
 
-		if(getLogStatus())
-			notifySent();
+		createNotification(getNotifyCount());
 		
 		if (length > 160)
 		{

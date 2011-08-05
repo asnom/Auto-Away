@@ -37,17 +37,12 @@
     
     <!-- Repeat -->
     <string name="repeat_title">Repeat Reponses</string>
-    <string name="repeat_summary">Response two or more times during a service lifecycle</string>
+    <string name="repeat_summary">Respond two or more times during a service lifecycle</string>
     
     <!-- Notification Message -->
     <string name="notification_ticker_text">Auto-Away Service now running</string>
+    <string name="notification_ticker_text_2">Auto replied to</string>
     <string name="notification_title">Auto-Away</string>
     <string name="notification_content">Auto-Away is currently running</string>
-    
-    <!-- Notification Log -->
-    <string name="nlog_ticker_text">Auto replied to</string>
-    <string name="nlog_title">Auto Replied</string>
-    <string name="nlog_content">Auto replied</string>
-    <string name="nlog_content_2">to</string>
-    <string name="nlog_content_3">times</string>
+
 </resources>

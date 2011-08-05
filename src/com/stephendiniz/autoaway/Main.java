@@ -1,9 +1,5 @@
 package com.stephendiniz.autoaway;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -22,8 +18,6 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	final String DELAY_PREF		= "delayEditText";
 	final String LOG_PREF		= "logCheckBox";
 	final String REPEAT_PREF	= "repeatCheckBox";
-	
-	final int NOTIFICATION_ID	= 1;
 	
 	Resources r;
 	
@@ -108,7 +102,6 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 			if(prefs.getBoolean(SERVICE_PREF, false))
 			{
 				setServiceStatus(false);
-				destroyNotification();
 				setPreferenceStatus(true);
 				stopService(awayService);
 			}
@@ -116,7 +109,6 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 			else
 			{
 				setServiceStatus(true);
-				createNotification();
 				setPreferenceStatus(false);
 
 				//Set Intent Extras
@@ -140,27 +132,6 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 				setDelayDuration("30");
 		
 		return true;
-	}
-	
-	private void createNotification()
-	{
-		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-		
-		Notification notification = new Notification(R.drawable.notification_icon, r.getString(R.string.notification_ticker_text), System.currentTimeMillis());
-		
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0);
-		
-		notification.setLatestEventInfo(this, r.getString(R.string.notification_title), r.getString(R.string.notification_content), contentIntent);
-		notification.flags |= Notification.FLAG_ONGOING_EVENT;
-		notification.flags |= Notification.FLAG_NO_CLEAR;
-		
-		nManager.notify(NOTIFICATION_ID, notification);
-	}
-	
-	private void destroyNotification()
-	{
-		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-		nManager.cancel(NOTIFICATION_ID);
 	}
 	
 	private void setPreferenceStatus(boolean status)

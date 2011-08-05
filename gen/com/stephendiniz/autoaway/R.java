@@ -39,18 +39,12 @@ public final class R {
         /**  Message 
          */
         public static final int message_title=0x7f040008;
-        public static final int nlog_content=0x7f040018;
-        public static final int nlog_content_2=0x7f040019;
-        public static final int nlog_content_3=0x7f04001a;
-        /**  Notification Log 
-         */
-        public static final int nlog_ticker_text=0x7f040016;
-        public static final int nlog_title=0x7f040017;
-        public static final int notification_content=0x7f040015;
+        public static final int notification_content=0x7f040016;
         /**  Notification Message 
          */
         public static final int notification_ticker_text=0x7f040013;
-        public static final int notification_title=0x7f040014;
+        public static final int notification_ticker_text_2=0x7f040014;
+        public static final int notification_title=0x7f040015;
         /**  Preferences Title 
          */
         public static final int preferences_title=0x7f040007;

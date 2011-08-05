@@ -35,7 +35,7 @@
 
 		<EditTextPreference
 			android:title="@string/delay_title"
-			android:defaultValue="30"
+			android:defaultValue="10"
 			android:summary="@string/delay_summary"
 			android:key="delayEditText" />
 		
