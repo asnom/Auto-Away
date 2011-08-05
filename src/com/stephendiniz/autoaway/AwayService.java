@@ -26,7 +26,7 @@ public class AwayService extends Service
 	private boolean repeatStatus;
 	private String returnAddress;
 	
-	private List<String> addresses;
+	private List<String> addresses = new ArrayList<String>();
 	
 	private Timer timer = new Timer();
 	private Bundle infoBundle;
@@ -76,6 +76,7 @@ public class AwayService extends Service
 		super.onDestroy();
 		
 		//Make sure to destroy the Broadcast Receiver when the Auto-Away Service is destroyed
+		addresses.removeAll(null);
 		unregisterReceiver(smsReceiver);
 	}
 
@@ -94,14 +95,13 @@ public class AwayService extends Service
 	{
 		if(!getRepeatStatus() || !(addresses.contains(getReturnAddress())))
 			setDelay();
-		
-		//addresses.add(getReturnAddress());
+		if(!addresses.contains(getReturnAddress()))
+			addresses.add(getReturnAddress());
 	}
 	
 	public void sendSms()
 	{
 		SmsManager manager = SmsManager.getDefault();
-		//addresses.add(getReturnAddress());
 		int length = getMessageContent().length();
 
 		if (length > 160)
