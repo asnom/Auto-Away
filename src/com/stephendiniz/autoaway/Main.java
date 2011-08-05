@@ -7,9 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.media.AudioManager;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
@@ -28,8 +26,6 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	final int NOTIFICATION_ID	= 1;
 
 	Resources r;
-
-	AudioManager aManager;
 
 	SharedPreferences prefs;
 	SharedPreferences.Editor editor;
@@ -77,16 +73,10 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		editor = prefs.edit();
-		
-		aManager = (AudioManager)getBaseContext().getSystemService(Context.AUDIO_SERVICE);
-		
-		if(aManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT)
-			setSilentStatus(true);
-		else
-			setSilentStatus(false);
 
 		setServiceStatus(prefs.getBoolean(SERVICE_PREF, false));
 		setMessageContent(prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content)));
+		setSilentStatus(prefs.getBoolean(SILENT_PREF, true));
 		setInformStatus(prefs.getBoolean(INFORM_PREF, true));
 		setDelayDuration(prefs.getString(DELAY_PREF, "30"));
 		setLogStatus(prefs.getBoolean(LOG_PREF, true));
@@ -101,7 +91,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 		super.onPause();
 
 		editor.putBoolean(SERVICE_PREF, serviceRunning());
-		editor.putBoolean(SILENT_PREF, isSilent());
+		editor.putBoolean(SILENT_PREF, getSilentStatus());
 		editor.putString(MESSAGE_PREF, getMessageContent());
 		editor.putBoolean(INFORM_PREF, getInformStatus());
 		editor.putBoolean(LOG_PREF, getLogStatus());
@@ -131,6 +121,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 				setPreferenceStatus(false);
 
 				//Set Intent Extras
+				awayService.putExtra("extraSilentStatus", getSilentStatus());
 				awayService.putExtra("extraMessageContent", getMessageContent());
 				awayService.putExtra("extraInformStatus", getInformStatus());
 				awayService.putExtra("extraDelayDuration", Integer.toString(getDelayDuration()));
@@ -141,14 +132,6 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 				startService(awayService);
 				finish();
 			}
-		}
-		else if(p.getKey().equals(SILENT_PREF))
-		{
-			if(prefs.getBoolean(SILENT_PREF, false))
-				aManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-
-			else
-				aManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 		}
 		else if(p.getKey().equals(MESSAGE_PREF))
 			if(getMessageContent().equals(""))
@@ -183,6 +166,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 
 	private void setPreferenceStatus(boolean status)
 	{
+		silentCheckBox.setEnabled(status);
 		messageEditText.setEnabled(status);
 		informCheckBox.setEnabled(status);
 		delayEditText.setEnabled(status);
@@ -196,11 +180,9 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	public void setServiceStatus(boolean serviceRunning)	{ editor.putBoolean(SERVICE_PREF, serviceRunning);	
 															  editor.commit();																}
 
-	public boolean isSilent()								{ return prefs.getBoolean(SILENT_PREF, false);									}
-	public void setSilentStatus(boolean isSilent)			{ editor.putBoolean(SILENT_PREF, isSilent);	
-															  CheckBoxPreference check = (CheckBoxPreference) silentCheckBox;
-															  check.setChecked(isSilent);
-															  editor.commit();																}
+	public boolean getSilentStatus()           				{ return prefs.getBoolean(SILENT_PREF, false);                  				}
+	public void setSilentStatus(boolean isSilent)     		{ editor.putBoolean(SILENT_PREF, isSilent);  
+	                                 						  editor.commit();                                								}
 
 	public String getMessageContent() 						{ return prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content));	}
 	public void setMessageContent(String messageContent)	{ editor.putString(MESSAGE_PREF, messageContent);

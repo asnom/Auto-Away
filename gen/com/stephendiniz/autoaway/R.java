@@ -41,6 +41,7 @@ public final class R {
         public static final int message_title=0x7f040008;
         public static final int nlog_content=0x7f040018;
         public static final int nlog_content_2=0x7f040019;
+        public static final int nlog_content_3=0x7f04001a;
         /**  Notification Log 
          */
         public static final int nlog_ticker_text=0x7f040016;

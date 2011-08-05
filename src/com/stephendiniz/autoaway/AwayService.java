@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.SmsManager;
@@ -22,6 +23,7 @@ import android.telephony.SmsMessage;
 public class AwayService extends Service
 {
 	private boolean informStatus;
+	private boolean silentStatus;
 	private String messageContent;
 	private int delayDuration;
 	private boolean logStatus;
@@ -37,6 +39,7 @@ public class AwayService extends Service
 	private Bundle infoBundle;
 	
 	Resources r;
+	AudioManager aManager;
 	
 	BroadcastReceiver smsReceiver;
 	
@@ -44,14 +47,19 @@ public class AwayService extends Service
 	{
 		super.onStart(intent, startId);
 		
-		setNotifyCount(1);
+		setNotifyCount(0);
 		
 		infoBundle = intent.getExtras();
+		setSilentStatus(infoBundle.getBoolean("extraSilentStatus"));
 		setMessageContent(infoBundle.getString("extraMessageContent"));
 		setInformStatus(infoBundle.getBoolean("extraInformStatus"));
 		setDelayDuration(infoBundle.getString("extraDelayDuration"));
 		setLogStatus(infoBundle.getBoolean("extraLogStatus"));
 		setRepeatStatus(infoBundle.getBoolean("extraRepeatStatus"));
+		
+		aManager = (AudioManager)getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+		if(getSilentStatus())
+		 	aManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 		
 		smsReceiver = new BroadcastReceiver()
 		{
@@ -85,10 +93,16 @@ public class AwayService extends Service
 	{
 		super.onDestroy();
 		
+		//Return back to Normal Ringer state (if it was changed)
+		if(getSilentStatus())
+			aManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+		
 		//Make sure to destroy the Broadcast Receiver when the Auto-Away Service is destroyed
-		addresses.clear();
-		timer.cancel();
 		unregisterReceiver(smsReceiver);
+		
+		//Release Timer	
+		timer.cancel();
+		timer.purge();
 	}
 
 	public void setDelay()
@@ -123,14 +137,15 @@ public class AwayService extends Service
 					nManager.cancel(NOTIFICATION_ID);
 
 					notification = new Notification(R.drawable.notification_icon, r.getString(R.string.nlog_ticker_text) + " " + getReturnAddress(), System.currentTimeMillis());
-					notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + getNotifyCount() + " " + r.getString(R.string.nlog_content_2), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
+					notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + Integer.toString((getNotifyCount()+1)) + " " + r.getString(R.string.nlog_content_3), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
 				}
 				else
 				{
 					notification = new Notification(R.drawable.notification_icon, r.getString(R.string.nlog_ticker_text) + " " + getReturnAddress(), System.currentTimeMillis());
-					notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + getReturnAddress(), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
+					notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + r.getString(R.string.nlog_content_2) + " " + getReturnAddress(), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
 				}
-
+				
+				notification.flags |= Notification.FLAG_AUTO_CANCEL;
 				nManager.notify(NOTIFICATION_ID, notification);
 				setNotifyCount(getNotifyCount() + 1);
 	}
@@ -158,6 +173,9 @@ public class AwayService extends Service
 	
 	//Getters and Setters for non-final variables
 	//Sets private variables AND preference
+	public boolean getSilentStatus()            			{ return silentStatus;                        						}
+	public void setSilentStatus(boolean silentStatus)    	{ this.silentStatus = silentStatus;                  				}
+	
 	public String getMessageContent() 						{ if(getInformStatus()) { return "[Auto-Away]: " + messageContent;	}
 															  return messageContent;											}
 	public void setMessageContent(String messageContent)	{ this.messageContent = messageContent;								}
