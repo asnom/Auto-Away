@@ -22,32 +22,53 @@ import android.telephony.SmsMessage;
 
 public class AwayService extends Service
 {
+<<<<<<< HEAD
 	private boolean informStatus;
+=======
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 	private boolean silentStatus;
 	private String messageContent;
+	private boolean informStatus;
 	private int delayDuration;
 	private boolean logStatus;
 	private boolean repeatStatus;
 	private String returnAddress;
 	private int notifyCount;
 	
+<<<<<<< HEAD
 	final int NOTIFICATION_ID = 2;
+=======
+	final int NOTIFICATION_ID = 1;
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 	
 	private List<String> addresses = new ArrayList<String>();
 	
 	private Timer timer = new Timer();
 	private Bundle infoBundle;
+<<<<<<< HEAD
 	
 	Resources r;
 	AudioManager aManager;
 	
 	BroadcastReceiver smsReceiver;
+=======
+
+	Resources r;
+	
+	AudioManager aManager;
+	
+	private BroadcastReceiver smsReceiver;
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 	
 	public void onStart(Intent intent, int startId)
 	{
 		super.onStart(intent, startId);
 		
 		setNotifyCount(0);
+<<<<<<< HEAD
+=======
+		createNotification(0);
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 		
 		infoBundle = intent.getExtras();
 		setSilentStatus(infoBundle.getBoolean("extraSilentStatus"));
@@ -58,8 +79,14 @@ public class AwayService extends Service
 		setRepeatStatus(infoBundle.getBoolean("extraRepeatStatus"));
 		
 		aManager = (AudioManager)getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+<<<<<<< HEAD
 		if(getSilentStatus())
 		 	aManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+=======
+		
+		if(getSilentStatus())
+			aManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 		
 		smsReceiver = new BroadcastReceiver()
 		{
@@ -93,11 +120,23 @@ public class AwayService extends Service
 	{
 		super.onDestroy();
 		
+<<<<<<< HEAD
+=======
+		destroyNotification();
+		
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 		//Return back to Normal Ringer state (if it was changed)
 		if(getSilentStatus())
 			aManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
 		
+<<<<<<< HEAD
 		//Make sure to destroy the Broadcast Receiver when the Auto-Away Service is destroyed
+=======
+		//Release Timer
+		timer.cancel();
+		timer.purge();
+		
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 		unregisterReceiver(smsReceiver);
 		
 		//Release Timer	
@@ -125,6 +164,7 @@ public class AwayService extends Service
 			addresses.add(getReturnAddress());
 	}
 	
+<<<<<<< HEAD
 	private void notifySent()
 	{
 		r = getResources();
@@ -148,6 +188,39 @@ public class AwayService extends Service
 				notification.flags |= Notification.FLAG_AUTO_CANCEL;
 				nManager.notify(NOTIFICATION_ID, notification);
 				setNotifyCount(getNotifyCount() + 1);
+=======
+	private void createNotification(int number)
+	{
+		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		Notification notification;
+		
+		r = getResources();
+		
+		if(getNotifyCount() > 0)
+		{
+			//Destory old Notification
+			nManager.cancel(NOTIFICATION_ID);
+
+			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.notification_ticker_text_2) + " " + getReturnAddress(), System.currentTimeMillis());
+			notification.setLatestEventInfo(this, r.getString(R.string.notification_title) + " (" + getNotifyCount() + ")", r.getString(R.string.notification_content), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
+		}
+		else
+		{
+			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.notification_ticker_text), System.currentTimeMillis());
+			notification.setLatestEventInfo(this, r.getString(R.string.notification_title), r.getString(R.string.notification_content), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
+		}
+		
+		notification.flags |= Notification.FLAG_ONGOING_EVENT;
+		notification.flags |= Notification.FLAG_NO_CLEAR;
+		nManager.notify(NOTIFICATION_ID, notification);
+		setNotifyCount(getNotifyCount() + 1);
+	}
+	
+	private void destroyNotification()
+	{
+		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		nManager.cancel(NOTIFICATION_ID);
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 	}
 	
 	public void sendSms()
@@ -158,6 +231,8 @@ public class AwayService extends Service
 		if(getLogStatus())
 			notifySent();
 
+		createNotification(getNotifyCount());
+		
 		if (length > 160)
 		{
 			ArrayList<String> messagelist = manager.divideMessage(getMessageContent());
@@ -173,8 +248,13 @@ public class AwayService extends Service
 	
 	//Getters and Setters for non-final variables
 	//Sets private variables AND preference
+<<<<<<< HEAD
 	public boolean getSilentStatus()            			{ return silentStatus;                        						}
 	public void setSilentStatus(boolean silentStatus)    	{ this.silentStatus = silentStatus;                  				}
+=======
+	public boolean getSilentStatus()						{ return silentStatus;												}
+	public void setSilentStatus(boolean silentStatus)		{ this.silentStatus = silentStatus;									}
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 	
 	public String getMessageContent() 						{ if(getInformStatus()) { return "[Auto-Away]: " + messageContent;	}
 															  return messageContent;											}
@@ -189,12 +269,22 @@ public class AwayService extends Service
 	public String getReturnAddress()						{ return returnAddress;												}
 	public void setReturnAddress(String returnAddress)		{ this.returnAddress = returnAddress;								}
 	
+<<<<<<< HEAD
 	public boolean getLogStatus()              				{ return logStatus;                         						}
 	public void setLogStatus(boolean logStatus)        		{ this.logStatus = logStatus;                    					}
+=======
+	public boolean getLogStatus()							{ return logStatus;													}
+	public void setLogStatus(boolean logStatus)				{ this.logStatus = logStatus;										}
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 	
 	public boolean getRepeatStatus()						{ return repeatStatus;												}
 	public void setRepeatStatus(boolean repeatStatus)		{ this.repeatStatus = repeatStatus;									}
 	
+<<<<<<< HEAD
 	public int getNotifyCount()                				{ return notifyCount;                        						}
 	public void setNotifyCount(int notifyCount)        		{ this.notifyCount = notifyCount;                  					}
+=======
+	public int getNotifyCount()								{ return notifyCount;												}
+	public void setNotifyCount(int notifyCount)				{ this.notifyCount = notifyCount;									}
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 }

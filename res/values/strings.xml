@@ -12,8 +12,8 @@
     <string name="service_summary">Starts the Auto-Away service</string>
     
     <!-- Silent -->
-    <string name="silent_title">Silent Mode</string>
-    <string name="silent_summary">Silence all sounds except media &amp; alarms</string>
+    <string name="silent_title">Silence on Start</string>
+    <string name="silent_summary">Silence all sounds except media &amp; alarms on service start</string>
     
     <!-- Preferences Title -->
     <string name="preferences_title">Preferences</string>
@@ -37,12 +37,14 @@
     
     <!-- Repeat -->
     <string name="repeat_title">Repeat Reponses</string>
-    <string name="repeat_summary">Response two or more times during a service lifecycle</string>
+    <string name="repeat_summary">Respond two or more times during a service lifecycle</string>
     
     <!-- Notification Message -->
     <string name="notification_ticker_text">Auto-Away Service now running</string>
+    <string name="notification_ticker_text_2">Auto replied to</string>
     <string name="notification_title">Auto-Away</string>
     <string name="notification_content">Auto-Away is currently running</string>
+<<<<<<< HEAD
     
     <!-- Notification Log -->
     <string name="nlog_ticker_text">Auto replied to</string>
@@ -50,4 +52,7 @@
     <string name="nlog_content">Auto replied</string>
     <string name="nlog_content_2">to</string>
     <string name="nlog_content_3">times</string>
+=======
+
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 </resources>

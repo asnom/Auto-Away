@@ -39,6 +39,7 @@ public final class R {
         /**  Message 
          */
         public static final int message_title=0x7f040008;
+<<<<<<< HEAD
         public static final int nlog_content=0x7f040018;
         public static final int nlog_content_2=0x7f040019;
         public static final int nlog_content_3=0x7f04001a;
@@ -51,6 +52,14 @@ public final class R {
          */
         public static final int notification_ticker_text=0x7f040013;
         public static final int notification_title=0x7f040014;
+=======
+        public static final int notification_content=0x7f040016;
+        /**  Notification Message 
+         */
+        public static final int notification_ticker_text=0x7f040013;
+        public static final int notification_ticker_text_2=0x7f040014;
+        public static final int notification_title=0x7f040015;
+>>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
         /**  Preferences Title 
          */
         public static final int preferences_title=0x7f040007;
