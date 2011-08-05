@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
@@ -21,6 +22,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	final String MESSAGE_PREF	= "messageEditText";
 	final String INFORM_PREF	= "informCheckBox";
 	final String DELAY_PREF		= "delayEditText";
+	final String LOG_PREF   	= "logCheckBox";
 	final String REPEAT_PREF	= "repeatCheckBox";
 
 	final int NOTIFICATION_ID	= 1;
@@ -38,6 +40,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	Preference informCheckBox;
 	Preference delayEditText;
 	Preference repeatCheckBox;
+	Preference logCheckBox;
 
 	@Override
 	public void onCreate (Bundle savedInstanceState)
@@ -56,27 +59,27 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 		messageEditText.setOnPreferenceChangeListener(this);
 
 		informCheckBox = (Preference)findPreference(INFORM_PREF);
-		informCheckBox.setOnPreferenceChangeListener(this);
+		
+		logCheckBox = (Preference)findPreference(LOG_PREF);
 
 		delayEditText = (Preference)findPreference(DELAY_PREF);
 		delayEditText.setOnPreferenceChangeListener(this);
 
 		repeatCheckBox = (Preference)findPreference(REPEAT_PREF);
-		repeatCheckBox.setOnPreferenceChangeListener(this);
 
-		r = getResources();
-
-		aManager = (AudioManager)getBaseContext().getSystemService(Context.AUDIO_SERVICE);
-
-
-		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		editor = prefs.edit();
 	}
 
 	public void onResume()
 	{
 		super.onResume();
+		
+		r = getResources();
 
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		editor = prefs.edit();
+		
+		aManager = (AudioManager)getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+		
 		if(aManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT)
 			setSilentStatus(true);
 		else
@@ -86,6 +89,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 		setMessageContent(prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content)));
 		setInformStatus(prefs.getBoolean(INFORM_PREF, true));
 		setDelayDuration(prefs.getString(DELAY_PREF, "30"));
+		setLogStatus(prefs.getBoolean(LOG_PREF, true));
 		setRepeatStatus(prefs.getBoolean(REPEAT_PREF, false));
 
 		if(serviceRunning())
@@ -100,10 +104,11 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 		editor.putBoolean(SILENT_PREF, isSilent());
 		editor.putString(MESSAGE_PREF, getMessageContent());
 		editor.putBoolean(INFORM_PREF, getInformStatus());
+		editor.putBoolean(LOG_PREF, getLogStatus());
 		editor.putString(DELAY_PREF, Integer.toString(getDelayDuration()));
 		editor.putBoolean(REPEAT_PREF, getRepeatStatus());
 	}
-
+	
 	@Override
 	public boolean onPreferenceChange(Preference p, Object o)
 	{
@@ -129,6 +134,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 				awayService.putExtra("extraMessageContent", getMessageContent());
 				awayService.putExtra("extraInformStatus", getInformStatus());
 				awayService.putExtra("extraDelayDuration", Integer.toString(getDelayDuration()));
+				awayService.putExtra("extraLogStatus", getLogStatus());
 				awayService.putExtra("extraRepeatStatus", getRepeatStatus());
 
 				//Start service and terminate activity
@@ -153,7 +159,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 
 		return true;
 	}
-
+	
 	private void createNotification()
 	{
 		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
@@ -180,6 +186,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 		messageEditText.setEnabled(status);
 		informCheckBox.setEnabled(status);
 		delayEditText.setEnabled(status);
+		logCheckBox.setEnabled(status);
 		repeatCheckBox.setEnabled(status);
 	}
 
@@ -191,6 +198,8 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 
 	public boolean isSilent()								{ return prefs.getBoolean(SILENT_PREF, false);									}
 	public void setSilentStatus(boolean isSilent)			{ editor.putBoolean(SILENT_PREF, isSilent);	
+															  CheckBoxPreference check = (CheckBoxPreference) silentCheckBox;
+															  check.setChecked(isSilent);
 															  editor.commit();																}
 
 	public String getMessageContent() 						{ return prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content));	}
@@ -204,7 +213,10 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	public int getDelayDuration()							{ return Integer.parseInt(prefs.getString(DELAY_PREF, "30"));					}
 	public void setDelayDuration(String delayDuration)		{ editor.putString(DELAY_PREF, delayDuration);
 															  editor.commit();																}
-
+	
+	public boolean getLogStatus()              				{ return prefs.getBoolean(LOG_PREF, true);                    					}
+	public void setLogStatus(boolean logStatus)        		{ editor.putBoolean(LOG_PREF, logStatus);
+															  editor.commit();                                								}
 	public boolean getRepeatStatus()						{ return prefs.getBoolean(REPEAT_PREF, true);									}
 	public void setRepeatStatus(boolean repeatStatus)		{ editor.putBoolean(REPEAT_PREF, repeatStatus);
 															  editor.commit();																}

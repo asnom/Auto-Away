@@ -31,6 +31,10 @@
     <string name="delay_title">Response Delay</string>
     <string name="delay_summary">Time (in seconds) to delay message response</string>
     
+    <!-- Log -->
+    <string name="log_title">Notification Log</string>
+    <string name="log_summary">Shows how many Auto-Away responses were sent out</string>
+    
     <!-- Repeat -->
     <string name="repeat_title">Repeat Reponses</string>
     <string name="repeat_summary">Response two or more times during a service lifecycle</string>
@@ -39,4 +43,10 @@
     <string name="notification_ticker_text">Auto-Away Service now running</string>
     <string name="notification_title">Auto-Away</string>
     <string name="notification_content">Auto-Away is currently running</string>
+    
+    <!-- Notification Log -->
+    <string name="nlog_ticker_text">Auto replied to</string>
+    <string name="nlog_title">Auto Replied</string>
+    <string name="nlog_content">Auto replied to</string>
+    <string name="nlog_content_2">people</string>
 </resources>

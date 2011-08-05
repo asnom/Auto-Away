@@ -30,23 +30,33 @@ public final class R {
         /**  Inform 
          */
         public static final int inform_title=0x7f04000b;
+        public static final int log_summary=0x7f040010;
+        /**  Log 
+         */
+        public static final int log_title=0x7f04000f;
         public static final int message_content=0x7f04000a;
         public static final int message_summary=0x7f040009;
         /**  Message 
          */
         public static final int message_title=0x7f040008;
-        public static final int notification_content=0x7f040013;
+        public static final int nlog_content=0x7f040018;
+        public static final int nlog_content_2=0x7f040019;
+        /**  Notification Log 
+         */
+        public static final int nlog_ticker_text=0x7f040016;
+        public static final int nlog_title=0x7f040017;
+        public static final int notification_content=0x7f040015;
         /**  Notification Message 
          */
-        public static final int notification_ticker_text=0x7f040011;
-        public static final int notification_title=0x7f040012;
+        public static final int notification_ticker_text=0x7f040013;
+        public static final int notification_title=0x7f040014;
         /**  Preferences Title 
          */
         public static final int preferences_title=0x7f040007;
-        public static final int repeat_summary=0x7f040010;
+        public static final int repeat_summary=0x7f040012;
         /**  Repeat 
          */
-        public static final int repeat_title=0x7f04000f;
+        public static final int repeat_title=0x7f040011;
         public static final int service_summary=0x7f040004;
         /**  Service 
          */
