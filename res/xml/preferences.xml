@@ -38,6 +38,12 @@
 			android:defaultValue="30"
 			android:summary="@string/delay_summary"
 			android:key="delayEditText" />
+		
+		<CheckBoxPreference
+			android:title="@string/log_title"
+			android:defaultValue="true"
+			android:summary="@string/log_summary"
+			android:key="logCheckBox" />
 			
 		<CheckBoxPreference
 			android:title="@string/repeat_title"

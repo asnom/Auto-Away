@@ -21,6 +21,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	final String MESSAGE_PREF	= "messageEditText";
 	final String INFORM_PREF	= "informCheckBox";
 	final String DELAY_PREF		= "delayEditText";
+	final String LOG_PREF		= "logCheckBox";
 	final String REPEAT_PREF	= "repeatCheckBox";
 	
 	final int NOTIFICATION_ID	= 1;
@@ -37,6 +38,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	Preference messageEditText;
 	Preference informCheckBox;
 	Preference delayEditText;
+	Preference logCheckBox;
 	Preference repeatCheckBox;
 	
 	@Override
@@ -56,13 +58,13 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 		messageEditText.setOnPreferenceChangeListener(this);
 		
 		informCheckBox = (Preference)findPreference(INFORM_PREF);
-		informCheckBox.setOnPreferenceChangeListener(this);
 		
 		delayEditText = (Preference)findPreference(DELAY_PREF);
 		delayEditText.setOnPreferenceChangeListener(this);
 		
+		logCheckBox = (Preference)findPreference(LOG_PREF);
+		
 		repeatCheckBox = (Preference)findPreference(REPEAT_PREF);
-		repeatCheckBox.setOnPreferenceChangeListener(this);
 		
 		r = getResources();
 		
@@ -86,6 +88,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 		setMessageContent(prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content)));
 		setInformStatus(prefs.getBoolean(INFORM_PREF, true));
 		setDelayDuration(prefs.getString(DELAY_PREF, "30"));
+		setLogStatus(prefs.getBoolean(LOG_PREF, true));
 		setRepeatStatus(prefs.getBoolean(REPEAT_PREF, false));
 		
 		if(serviceRunning())
@@ -101,6 +104,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 		editor.putString(MESSAGE_PREF, getMessageContent());
 		editor.putBoolean(INFORM_PREF, getInformStatus());
 		editor.putString(DELAY_PREF, Integer.toString(getDelayDuration()));
+		editor.putBoolean(LOG_PREF, getLogStatus());
 		editor.putBoolean(REPEAT_PREF, getRepeatStatus());
 	}
 	
@@ -129,6 +133,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 				awayService.putExtra("extraMessageContent", getMessageContent());
 				awayService.putExtra("extraInformStatus", getInformStatus());
 				awayService.putExtra("extraDelayDuration", Integer.toString(getDelayDuration()));
+				awayService.putExtra("extraLogStatus", getLogStatus());
 				awayService.putExtra("extraRepeatStatus", getRepeatStatus());
 
 				//Start service and terminate activity
@@ -180,6 +185,7 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 		messageEditText.setEnabled(status);
 		informCheckBox.setEnabled(status);
 		delayEditText.setEnabled(status);
+		logCheckBox.setEnabled(status);
 		repeatCheckBox.setEnabled(status);
 	}
 	
@@ -203,6 +209,10 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	
 	public int getDelayDuration()							{ return Integer.parseInt(prefs.getString(DELAY_PREF, "30"));					}
 	public void setDelayDuration(String delayDuration)		{ editor.putString(DELAY_PREF, delayDuration);
+															  editor.commit();																}
+	
+	public boolean getLogStatus()							{ return prefs.getBoolean(LOG_PREF, true);										}
+	public void setLogStatus(boolean logStatus)				{ editor.putBoolean(LOG_PREF, logStatus);
 															  editor.commit();																}
 	
 	public boolean getRepeatStatus()						{ return prefs.getBoolean(REPEAT_PREF, true);									}

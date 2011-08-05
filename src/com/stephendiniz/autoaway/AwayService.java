@@ -5,11 +5,15 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.SmsManager;
@@ -17,30 +21,38 @@ import android.telephony.SmsMessage;
 
 public class AwayService extends Service
 {
-	final String MESSAGE_PREF	= "messageEditText";
-	final String DELAY_PREF		= "delayEditText";
-
 	private boolean informStatus;
 	private String messageContent;
 	private int delayDuration;
+	private boolean logStatus;
 	private boolean repeatStatus;
 	private String returnAddress;
+	private int notifyCount;
 	
-	List<String> addresses;
+	final int NOTIFICATION_ID = 2;
+	
+	private List<String> addresses = new ArrayList<String>();
 	
 	Timer timer = new Timer();
 	Bundle infoBundle;
 
+	Resources r;
+	
 	private BroadcastReceiver smsReceiver;
 	
 	public void onStart(Intent intent, int startId)
 	{
 		super.onStart(intent, startId);
 
+		r = getResources();
+		
+		setNotifyCount(0);
+		
 		infoBundle = intent.getExtras();
 		setMessageContent(infoBundle.getString("extraMessageContent"));
 		setInformStatus(infoBundle.getBoolean("extraInformStatus"));
 		setDelayDuration(infoBundle.getString("extraDelayDuration"));
+		setLogStatus(infoBundle.getBoolean("extraLogStatus"));
 		setRepeatStatus(infoBundle.getBoolean("extraRepeatStatus"));
 		
 		smsReceiver = new BroadcastReceiver()
@@ -76,6 +88,7 @@ public class AwayService extends Service
 		super.onDestroy();
 		
 		//Make sure to destroy the Broadcast Receiver when the Auto-Away Service is destroyed
+		addresses.removeAll(null);
 		unregisterReceiver(smsReceiver);
 	}
 
@@ -94,8 +107,32 @@ public class AwayService extends Service
 	{
 		if(!getRepeatStatus() || !(addresses.contains(getReturnAddress())))
 			setDelay();
+
+		if(!addresses.contains(getReturnAddress()))
+			addresses.add(getReturnAddress());
+	}
+	
+	private void notifySent()
+	{
+		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+		Notification notification;
 		
-		addresses.add(getReturnAddress());
+		if(getNotifyCount() > 0)
+		{
+			//Destory old Notification
+			nManager.cancel(NOTIFICATION_ID);
+
+			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.nlog_ticker_text) + " " + getReturnAddress(), System.currentTimeMillis());
+			notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + getNotifyCount() + " " + r.getString(R.string.nlog_content_2), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
+		}
+		else
+		{
+			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.nlog_ticker_text) + " " + getReturnAddress(), System.currentTimeMillis());
+			notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + getReturnAddress(), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
+		}
+		
+		nManager.notify(NOTIFICATION_ID, notification);
+		setNotifyCount(getNotifyCount() + 1);
 	}
 	
 	public void sendSms()
@@ -112,6 +149,9 @@ public class AwayService extends Service
 		}
 		else
 			manager.sendTextMessage(getReturnAddress(), null, getMessageContent(), null, null);
+		
+		if(getLogStatus())
+			notifySent();
 	}
 
 	@Override
@@ -132,6 +172,12 @@ public class AwayService extends Service
 	public String getReturnAddress()						{ return returnAddress;												}
 	public void setReturnAddress(String returnAddress)		{ this.returnAddress = returnAddress;								}
 	
+	public boolean getLogStatus()							{ return logStatus;													}
+	public void setLogStatus(boolean logStatus)				{ this.logStatus = logStatus;										}
+	
 	public boolean getRepeatStatus()						{ return repeatStatus;												}
 	public void setRepeatStatus(boolean repeatStatus)		{ this.repeatStatus = repeatStatus;									}
+	
+	public int getNotifyCount()								{ return notifyCount;												}
+	public void setNotifyCount(int notifyCount)				{ this.notifyCount = notifyCount;									}
 }
