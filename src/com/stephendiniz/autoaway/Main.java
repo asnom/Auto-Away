@@ -65,32 +65,31 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 		logCheckBox = (Preference)findPreference(LOG_PREF);
 		
 		repeatCheckBox = (Preference)findPreference(REPEAT_PREF);
-		
-		r = getResources();
-		
-		aManager = (AudioManager)getBaseContext().getSystemService(Context.AUDIO_SERVICE);
-		
-		
-		prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		editor = prefs.edit();
 	}
 	
 	public void onResume()
 	{
 		super.onResume();
 		
+		r = getResources();
+
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		editor = prefs.edit();
+
+		aManager = (AudioManager)getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+
 		if(aManager.getRingerMode() == AudioManager.RINGER_MODE_SILENT)
 			setSilentStatus(true);
 		else
 			setSilentStatus(false);
-		
+
 		setServiceStatus(prefs.getBoolean(SERVICE_PREF, false));
 		setMessageContent(prefs.getString(MESSAGE_PREF, r.getString(R.string.message_content)));
 		setInformStatus(prefs.getBoolean(INFORM_PREF, true));
 		setDelayDuration(prefs.getString(DELAY_PREF, "30"));
 		setLogStatus(prefs.getBoolean(LOG_PREF, true));
 		setRepeatStatus(prefs.getBoolean(REPEAT_PREF, false));
-		
+
 		if(serviceRunning())
 			setPreferenceStatus(false);
 	}

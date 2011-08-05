@@ -33,8 +33,8 @@ public class AwayService extends Service
 	
 	private List<String> addresses = new ArrayList<String>();
 	
-	Timer timer = new Timer();
-	Bundle infoBundle;
+	private Timer timer = new Timer();
+	private Bundle infoBundle;
 
 	Resources r;
 	
@@ -43,8 +43,6 @@ public class AwayService extends Service
 	public void onStart(Intent intent, int startId)
 	{
 		super.onStart(intent, startId);
-
-		r = getResources();
 		
 		setNotifyCount(0);
 		
@@ -90,6 +88,7 @@ public class AwayService extends Service
 		//Make sure to destroy the Broadcast Receiver when the Auto-Away Service is destroyed
 		addresses.removeAll(null);
 		setNotifyCount(0);
+		timer.cancel();
 		unregisterReceiver(smsReceiver);
 	}
 
@@ -118,6 +117,8 @@ public class AwayService extends Service
 		NotificationManager nManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notification;
 		
+		r = getResources();
+		
 		if(getNotifyCount() > 0)
 		{
 			//Destory old Notification
@@ -140,9 +141,11 @@ public class AwayService extends Service
 	public void sendSms()
 	{
 		SmsManager manager = SmsManager.getDefault();
-		
 		int length = getMessageContent().length();
 
+		if(getLogStatus())
+			notifySent();
+		
 		if (length > 160)
 		{
 			ArrayList<String> messagelist = manager.divideMessage(getMessageContent());
@@ -151,9 +154,6 @@ public class AwayService extends Service
 		}
 		else
 			manager.sendTextMessage(getReturnAddress(), null, getMessageContent(), null, null);
-		
-		if(getLogStatus())
-			notifySent();
 	}
 
 	@Override
