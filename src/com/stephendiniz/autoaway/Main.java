@@ -173,7 +173,6 @@ public class Main extends PreferenceActivity implements OnPreferenceChangeListen
 	
 	public int getDelayDuration()							{ return delayDuration;									}
 	public void setDelayDuration(String delayDuration)		{ this.delayDuration = Integer.parseInt(delayDuration);	
-															  prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 														      editor = prefs.edit();
 															  editor.putString(DELAY_PREF, delayDuration);
 															  editor.commit();										}
