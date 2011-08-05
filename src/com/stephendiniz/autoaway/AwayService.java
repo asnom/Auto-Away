@@ -1,6 +1,7 @@
 package com.stephendiniz.autoaway;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -19,9 +20,13 @@ public class AwayService extends Service
 	final String MESSAGE_PREF	= "messageEditText";
 	final String DELAY_PREF		= "delayEditText";
 
+	private boolean informStatus;
 	private String messageContent;
 	private int delayDuration;
+	private boolean repeatStatus;
 	private String returnAddress;
+	
+	List<String> addresses;
 	
 	Timer timer = new Timer();
 	Bundle infoBundle;
@@ -34,7 +39,9 @@ public class AwayService extends Service
 
 		infoBundle = intent.getExtras();
 		setMessageContent(infoBundle.getString("extraMessageContent"));
+		setInformStatus(infoBundle.getBoolean("extraInformStatus"));
 		setDelayDuration(infoBundle.getString("extraDelayDuration"));
+		setRepeatStatus(infoBundle.getBoolean("extraRepeatStatus"));
 		
 		smsReceiver = new BroadcastReceiver()
 		{
@@ -56,7 +63,7 @@ public class AwayService extends Service
 						setReturnAddress(msgs[i].getOriginatingAddress());
 					}
 					
-					setDelay();
+					repeatCheck();
 				}
 			}
 		};
@@ -83,6 +90,14 @@ public class AwayService extends Service
 		},(long)(1000*getDelayDuration()));
 	}
 	
+	public void repeatCheck()
+	{
+		if(!getRepeatStatus() || !(addresses.contains(getReturnAddress())))
+			setDelay();
+		
+		addresses.add(getReturnAddress());
+	}
+	
 	public void sendSms()
 	{
 		SmsManager manager = SmsManager.getDefault();
@@ -104,12 +119,19 @@ public class AwayService extends Service
 	
 	//Getters and Setters for non-final variables
 	//Sets private variables AND preference
-	public String getMessageContent() 						{ return messageContent;								}
-	public void setMessageContent(String messageContent)	{ this.messageContent = messageContent;					}
+	public String getMessageContent() 						{ if(getInformStatus()) { return "[Auto-Away]: " + messageContent;	}
+															  return messageContent;											}
+	public void setMessageContent(String messageContent)	{ this.messageContent = messageContent;								}
 
-	public int getDelayDuration()							{ return delayDuration;									}
-	public void setDelayDuration(String delayDuration)		{ this.delayDuration = Integer.parseInt(delayDuration);	}
+	public boolean getInformStatus()						{ return informStatus;												}
+	public void setInformStatus(boolean informStatus)		{ this.informStatus = informStatus;									}
 	
-	public String getReturnAddress()						{ return returnAddress;									}
-	public void setReturnAddress(String returnAddress)		{ this.returnAddress = returnAddress;					}
+	public int getDelayDuration()							{ return delayDuration;												}
+	public void setDelayDuration(String delayDuration)		{ this.delayDuration = Integer.parseInt(delayDuration);				}
+	
+	public String getReturnAddress()						{ return returnAddress;												}
+	public void setReturnAddress(String returnAddress)		{ this.returnAddress = returnAddress;								}
+	
+	public boolean getRepeatStatus()						{ return repeatStatus;												}
+	public void setRepeatStatus(boolean repeatStatus)		{ this.repeatStatus = repeatStatus;									}
 }
