@@ -47,6 +47,7 @@
     <!-- Notification Log -->
     <string name="nlog_ticker_text">Auto replied to</string>
     <string name="nlog_title">Auto Replied</string>
-    <string name="nlog_content">Auto replied to</string>
-    <string name="nlog_content_2">people</string>
+    <string name="nlog_content">Auto replied</string>
+    <string name="nlog_content_2">to</string>
+    <string name="nlog_content_3">times</string>
 </resources>

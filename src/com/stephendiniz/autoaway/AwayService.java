@@ -123,12 +123,12 @@ public class AwayService extends Service
 			nManager.cancel(NOTIFICATION_ID);
 
 			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.nlog_ticker_text) + " " + getReturnAddress(), System.currentTimeMillis());
-			notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + getNotifyCount() + " " + r.getString(R.string.nlog_content_2), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
+			notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + Integer.toString((getNotifyCount()+1)) + " " + r.getString(R.string.nlog_content_3), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
 		}
 		else
 		{
 			notification = new Notification(R.drawable.notification_icon, r.getString(R.string.nlog_ticker_text) + " " + getReturnAddress(), System.currentTimeMillis());
-			notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + getReturnAddress(), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
+			notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + r.getString(R.string.nlog_content_2) + " " + getReturnAddress(), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
 		}
 		
 		nManager.notify(NOTIFICATION_ID, notification);
