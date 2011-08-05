@@ -89,6 +89,7 @@ public class AwayService extends Service
 		
 		//Make sure to destroy the Broadcast Receiver when the Auto-Away Service is destroyed
 		addresses.removeAll(null);
+		setNotifyCount(0);
 		unregisterReceiver(smsReceiver);
 	}
 
@@ -131,6 +132,7 @@ public class AwayService extends Service
 			notification.setLatestEventInfo(this, r.getString(R.string.nlog_title), r.getString(R.string.nlog_content) + " " + r.getString(R.string.nlog_content_2) + " " + getReturnAddress(), PendingIntent.getActivity(this, 0, new Intent(this, Main.class), 0));
 		}
 		
+		notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		nManager.notify(NOTIFICATION_ID, notification);
 		setNotifyCount(getNotifyCount() + 1);
 	}
