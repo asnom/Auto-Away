@@ -11,15 +11,29 @@
     <string name="service_title">Start</string>
     <string name="service_summary">Starts the Auto-Away service</string>
     
+    <!-- Silent -->
+    <string name="silent_title">Silent Mode</string>
+    <string name="silent_summary">Silence all sounds except media &amp; alarms</string>
+    
+    <!-- Preferences Title -->
+    <string name="preferences_title">Preferences</string>
+    
     <!-- Message -->
     <string name="message_title">Custom Message</string>
     <string name="message_summary">Message to send out when a text is received</string>
     <string name="message_content">Hey, I\'m busy, I\'ll talk to you later</string>
     
-    <!-- Delay -->
-    <string name="delay_title">Delay</string>
-    <string name="delay_summary">How many seconds to delay</string>
+    <!-- Inform -->
+    <string name="inform_title">Inform Recipient</string>
+    <string name="inform_summary">Adds an "Auto-Away" prefix to your custom message</string>
     
+    <!-- Response Delay -->
+    <string name="delay_title">Response Delay</string>
+    <string name="delay_summary">Time (in seconds) to delay message response</string>
+    
+    <!-- Repeat -->
+    <string name="repeat_title">Repeat Reponses</string>
+    <string name="repeat_summary">Response two or more times during a service lifecycle</string>
     
     <!-- Notification Message -->
     <string name="notification_ticker_text">Auto-Away Service now running</string>

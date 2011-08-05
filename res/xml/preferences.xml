@@ -3,24 +3,47 @@
 
 	<PreferenceCategory
 		android:title="@string/general_title" >
-
+	
 		<CheckBoxPreference
 			android:title="@string/service_title"
 			android:defaultValue="false"
 			android:summary="@string/service_summary"
 			android:key="serviceCheckBox" />
+			
+		<CheckBoxPreference
+			android:title="@string/silent_title"
+			android:defaultValue="false"
+			android:summary="@string/silent_summary"
+			android:key="silentCheckBox" />
+			
+	</PreferenceCategory>
+	
+	<PreferenceCategory
+			android:title="@string/preferences_title" >
 
 		<EditTextPreference
 			android:title="@string/message_title"
 			android:defaultValue="@string/message_content"
 			android:summary="@string/message_summary"
 			android:key="messageEditText" />
-			
+
+		<CheckBoxPreference
+			android:title="@string/inform_title"
+			android:defaultValue="true"
+			android:summary="@string/inform_summary"
+			android:key="informCheckBox" />
+
 		<EditTextPreference
 			android:title="@string/delay_title"
 			android:defaultValue="30"
 			android:summary="@string/delay_summary"
 			android:key="delayEditText" />
+			
+		<CheckBoxPreference
+			android:title="@string/repeat_title"
+			android:defaultValue="false"
+			android:summary="@string/repeat_summary"
+			android:key="repeatCheckBox" />
 
 	</PreferenceCategory>
 

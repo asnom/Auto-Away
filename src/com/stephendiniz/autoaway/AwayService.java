@@ -26,10 +26,10 @@ public class AwayService extends Service
 	private boolean repeatStatus;
 	private String returnAddress;
 	
-	List<String> addresses;
+	private List<String> addresses;
 	
-	Timer timer = new Timer();
-	Bundle infoBundle;
+	private Timer timer = new Timer();
+	private Bundle infoBundle;
 
 	BroadcastReceiver smsReceiver;
 	
@@ -95,13 +95,13 @@ public class AwayService extends Service
 		if(!getRepeatStatus() || !(addresses.contains(getReturnAddress())))
 			setDelay();
 		
-		addresses.add(getReturnAddress());
+		//addresses.add(getReturnAddress());
 	}
 	
 	public void sendSms()
 	{
 		SmsManager manager = SmsManager.getDefault();
-		
+		//addresses.add(getReturnAddress());
 		int length = getMessageContent().length();
 
 		if (length > 160)
