@@ -44,15 +44,5 @@
     <string name="notification_ticker_text_2">Auto replied to</string>
     <string name="notification_title">Auto-Away</string>
     <string name="notification_content">Auto-Away is currently running</string>
-<<<<<<< HEAD
-    
-    <!-- Notification Log -->
-    <string name="nlog_ticker_text">Auto replied to</string>
-    <string name="nlog_title">Auto Replied</string>
-    <string name="nlog_content">Auto replied</string>
-    <string name="nlog_content_2">to</string>
-    <string name="nlog_content_3">times</string>
-=======
 
->>>>>>> 0c64c86dd816308a4d3b05dc4b0b0840be617092
 </resources>
